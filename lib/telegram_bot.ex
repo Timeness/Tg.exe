@@ -1,12 +1,11 @@
 defmodule TelegramBot do
-  use Application
+  @moduledoc """
+  Main module for the Telegram bot.
+  """
 
-  def start(_type, _args) do
-    children = [
-      TelegramBot.Bot
-    ]
+  use Telegex.Polling
 
-    opts = [strategy: :one_for_one, name: TelegramBot.Supervisor]
-    Supervisor.start_link(children, opts)
+  def handle_update(update) do
+    TelegramBot.CommandHandler.handle(update)
   end
 end
