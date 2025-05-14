@@ -1,15 +1,19 @@
-FROM hexpm/elixir:1.14.5-erlang-25.3-alpine
-
-RUN apk add --no-cache build-base git
-
+FROM elixir:1.14
 WORKDIR /app
+
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY mix.exs mix.lock ./
+
+RUN mix local.hex --force && mix local.rebar --force
+RUN mix deps.get
 
 COPY . .
 
-# Replace Hex/rebar install with GitHub-based install
-RUN mix archive.install github hexpm/hex --branch latest --force && \
-    mix archive.install github hexpm/rebar3 --branch main --force && \
-    mix deps.get && \
-    MIX_ENV=prod mix compile
+RUN mix compile
+ENV MIX_ENV=prod
+EXPOSE 4000
 
 CMD ["mix", "run", "--no-halt"]
