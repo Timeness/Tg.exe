@@ -1,0 +1,13 @@
+[build]
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+startCommand = "mix run --no-halt"
+healthcheckPath = "/"
+healthcheckTimeout = 300
+restartPolicyType = "always"
+
+[env]
+MIX_ENV = "prod"
+BOT_TOKEN = "${{ secrets.BOT_TOKEN }}"
